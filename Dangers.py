@@ -5,8 +5,13 @@ import re
 
 def getAllDangers(Name):
     CID = getCID(Name)
-    section = getDangerSection(CID)
-    dangers = getDangers(section)
+    
+    res = requests.get("https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/" + str(CID) + "/JSON")
+    info = json.loads(res.content)['Record']['Section']
+
+    name = getName(info)
+        
+    dangers = [name] + getDangers(info)
     return dangers
 
 def getCID(cpName):
@@ -17,16 +22,24 @@ def getCID(cpName):
     else:
         return None
 
-def getDangerSection(CID):
-    res = requests.get("https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/" + str(CID) + "/JSON")
-    info = json.loads(res.content)
-    for section in info['Record']['Section']:
-        if(section['TOCHeading'] == 'Safety and Hazards'):
+def getName(info):
+    for section in info:
+        if (section['TOCHeading'] == 'Names and Identifiers'):
+            return section['Section'][0]['Information'][0]['StringValue']
+
+
+def getDangerSection(info):
+    for section in info:
+        if (section['TOCHeading'] == 'Safety and Hazards'):
             return section['Section'][0]['Section'][0]['Information'][0]['StringValue']
 
-    return None
 
-def getDangers(section):
+def getDangers(info):
+    section = getDangerSection(info)
+
+    if section == None:
+        return [[],[],[]]
+
     soup = BeautifulSoup(section, 'html.parser')
 
     images = soup.find("div", {"class": "pc-thumbnail-container"})
@@ -44,5 +57,5 @@ def getDangers(section):
 def cleanUp(Array):
     newArray = []
     for string in Array:
-        newArray.append(string.replace("*","").replace(" ",""))
+        newArray.append(re.findall("(H\d\d\d)", string))
     return newArray
