@@ -2,16 +2,23 @@ import requests
 import json
 from bs4 import BeautifulSoup
 import re
+from datetime import datetime
 
 def getAllDangers(Name):
+    print("Start: " + str(datetime.now()))
     CID = getCID(Name)
-    
+    print("Web1: " + str(datetime.now()))
     res = requests.get("https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/" + str(CID) + "/JSON")
-    info = json.loads(res.content)['Record']['Section']
+    print("Web2: " + str(datetime.now()))
+    try:
+        info = json.loads(res.content)['Record']['Section']
+    except:
+        return res.content
 
     name = getName(info)
         
     dangers = [name] + getDangers(info)
+    print("End: " + str(datetime.now()))
     return dangers
 
 def getCID(cpName):
