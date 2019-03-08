@@ -3,6 +3,7 @@ from multiprocessing import Pool
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.core.window import Window
+import Main
 
 
 def getForAll(elements):
@@ -18,24 +19,14 @@ def getForAll(elements):
     return results
 
 class UI(Widget):
-    def __init__(self, **kwargs):
-        super(UI, self).__init__(**kwargs)
-        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
-        self._keyboard.bind(on_key_down=self._on_keyboard_down)
-
-    def _keyboard_closed(self):
-        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
-        self._keyboard = None
-
-    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
-        if keycode[1] == 'w':
-            print("yes")
-            return False
-        return True
-
+    pass
 
 class UIApp(App):
     def build(self):
+        Window.bind(on_key_down=self.key_action)
         return UI()
 
+    def key_action(self, *args):
+        if(list(args)[1] == 13 and list(args)[4] == ['ctrl'] ):
+            Main.getForAll(["Water"])
 UIApp().run()
