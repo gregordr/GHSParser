@@ -3,6 +3,19 @@ import json
 from bs4 import BeautifulSoup
 import re
 from datetime import datetime
+from multiprocessing import Pool
+
+def getForAll(elements):
+    pool = Pool()
+    f = lambda A, n=5: [A[i:i + n] for i in range(0, len(A), n)]
+    queries = f(elements) #Pubchem asks to only perform 5 requests per second, so we need to split into groups of 5.
+
+    results = []
+
+    for query in queries:
+         results += pool.map(getAllDangers, query)
+
+    return results
 
 def getAllDangers(Name):
     print("Start: " + str(datetime.now()))
@@ -22,7 +35,7 @@ def getAllDangers(Name):
     return dangers
 
 def getCID(cpName):
-    res = requests.get("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" + cpName + "/cids/JSON")
+    res = requests.get("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" + str(cpName) + "/cids/JSON")
     info = json.loads(res.content)
     if (info.keys().__contains__('IdentifierList')):
         return info['IdentifierList']['CID'][0]
