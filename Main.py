@@ -2,6 +2,8 @@ import Dangers
 import OutputProcessor
 from kivy.app import App
 from kivy.uix.widget import Widget
+from kivy.lang import Builder
+import re
 
 class UI(Widget):
     pass
@@ -16,14 +18,12 @@ class UIApp(App):
             self.process()
 
     def process(self):
-        print(UI)
-        a = UI.ids
-        text = UI.ids.input
-        print(text)
-        #print(Dangers.getForAll(["Water"]))
+        text = self.root.ids.input.text
+        allCompounds = re.split("[\n;]" ,text)
+
 
 
 if __name__ == "__main__":
-    d=None
-    #from kivy.core.window import Window
-    #UIApp().run()
+    from kivy.core.window import Window
+    Builder.load_file('UI.kv')
+    UIApp().run()

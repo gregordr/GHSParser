@@ -1,6 +1,7 @@
 from docx import Document
 from tkinter import Tk
 from docx.shared import Inches
+import json
 
 size = 75
 
@@ -22,12 +23,13 @@ def buildString(allDangers):
 def doWord(allDangers):
 
     document = Document()
-    #makenewparagraph
     summedDangers = mainTable(document, allDangers)
-    #makenewparagraph
-    #hazards
-    #makenewparagraph
-    #precautions
+    if(len(summedDangers[0]) != 0):
+        document.add_paragraph()
+        hazardTable(document, summedDangers[0])
+    if(len(summedDangers[1]) != 0):
+        document.add_paragraph()
+        precautionTable(document, summedDangers[1])
 
     document.save("here.docx")
 
@@ -65,3 +67,25 @@ def mainTable(document, allDangers):
             row_cells[3].text = row_cells[3].text[:-2]
 
     return [summedHazards, summedPrecautions]
+
+def hazardTable(document, summedHazards):
+    table = document.add_table(rows=0, cols=2, style='TableGrid')
+    with open('HP\\hazards.txt', 'r') as allHazardsFile:
+        allHazards = allHazardsFile.read()
+        hazardDict = json.loads(allHazards)
+        for hazard in hazardDict:
+            if(hazard in summedHazards):
+                row_cells = table.add_row().cells
+                row_cells[0].text = hazard
+                row_cells[1].text = hazardDict.get(hazard)
+
+def precautionTable(document, summedPrecautions):
+    table = document.add_table(rows=0, cols=2, style='TableGrid')
+    with open('HP\\precautions.txt', 'r') as allPrecautionsFile:
+        allPrecautions = allPrecautionsFile.read()
+        precautionDict = json.loads(allPrecautions)
+        for precaution in precautionDict:
+            if(precaution in summedPrecautions):
+                row_cells = table.add_row().cells
+                row_cells[0].text = precaution
+                row_cells[1].text = precautionDict.get(precaution)
