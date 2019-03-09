@@ -18,15 +18,12 @@ def getForAll(elements):
     return results
 
 def getAllDangers(Name):
-    print("Start: " + str(datetime.now()))
     CID = getCID(Name)
-    print("Web1: " + str(datetime.now()))
     res = requests.get("https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/" + str(CID) + "/JSON")
-    print("Web2: " + str(datetime.now()))
     try:
         info = json.loads(res.content)['Record']['Section']
     except:
-        return res.content
+        return ['Error', Name]
 
     name = getName(info)
         

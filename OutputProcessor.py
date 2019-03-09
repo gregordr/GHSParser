@@ -1,6 +1,6 @@
 from docx import Document
 from tkinter import Tk
-from docx.shared import Inches
+from docx.shared import Cm
 import json
 
 size = 75
@@ -31,19 +31,31 @@ def doWord(allDangers):
         document.add_paragraph()
         precautionTable(document, summedDangers[1])
 
-    document.save("here.docx")
+    location = 'here.docx'
+    document.save(location)
+
+    return location
 
 def mainTable(document, allDangers):
 
     summedHazards = []
     summedPrecautions = []
 
-    table = document.add_table(rows=1, cols=4, style='TableGrid')
+    table = document.add_table(rows=0, cols=4, style='TableGrid')
+
+    table.columns[0].width = Cm(3.44)
+    table.columns[1].width = Cm(4.75)
+    table.columns[2].width = Cm(2.49)
+    table.columns[3].width = Cm(4.56)
+
+    table.add_row()
     hdr_cells = table.rows[0].cells
+
     hdr_cells[0].text = 'Name'
     hdr_cells[1].text = 'Symbols'
     hdr_cells[2].text = 'Hazards'
     hdr_cells[3].text = 'Precautions'
+
 
     for danger in allDangers:
         row_cells = table.add_row().cells
@@ -70,6 +82,9 @@ def mainTable(document, allDangers):
 
 def hazardTable(document, summedHazards):
     table = document.add_table(rows=0, cols=2, style='TableGrid')
+    table.columns[0].width = Cm(3.44)
+    table.columns[1].width = Cm(11.8)
+
     with open('HP\\hazards.txt', 'r', encoding='utf-8') as allHazardsFile:
         allHazards = allHazardsFile.read()
         hazardDict = json.loads(allHazards)
@@ -81,6 +96,9 @@ def hazardTable(document, summedHazards):
 
 def precautionTable(document, summedPrecautions):
     table = document.add_table(rows=0, cols=2, style='TableGrid')
+    table.columns[0].width = Cm(3.44)
+    table.columns[1].width = Cm(11.8)
+
     with open('HP\\precautions.txt', 'r', encoding='utf-8') as allPrecautionsFile:
         allPrecautions = allPrecautionsFile.read()
         precautionDict = json.loads(allPrecautions)
