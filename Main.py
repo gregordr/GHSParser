@@ -1,9 +1,9 @@
 import Dangers
 import OutputProcessor
+import re
+
 from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.lang import Builder
-import re
 
 class UI(Widget):
     pass
@@ -50,6 +50,8 @@ class UIApp(App):
             output.text = str(e)
 
 if __name__ == "__main__":
+    print("YAY")
+    from kivy.lang import Builder
     from kivy.core.window import Window
     Builder.load_file('UI.kv')
     UIApp().run()

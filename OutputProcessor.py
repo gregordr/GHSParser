@@ -1,5 +1,4 @@
 from docx import Document
-from tkinter import Tk
 from docx.shared import Cm
 import json
 
