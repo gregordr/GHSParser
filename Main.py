@@ -1,6 +1,11 @@
+import multiprocessing
+
 import Dangers
 import OutputProcessor
 import re
+import os
+os.environ["KIVY_NO_FILELOG"] = "1"
+os.environ["KIVY_NO_CONSOLELOG"] = "1"
 
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -50,7 +55,7 @@ class UIApp(App):
             output.text = str(e)
 
 if __name__ == "__main__":
-    print("YAY")
+    multiprocessing.freeze_support()
     from kivy.lang import Builder
     from kivy.core.window import Window
     Builder.load_file('UI.kv')

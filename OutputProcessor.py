@@ -30,8 +30,8 @@ def doWord(allDangers):
         document.add_paragraph()
         precautionTable(document, summedDangers[1])
 
-    location = 'here.docx'
-    document.save(location)
+    location = 'GHS.docx'
+    document.save('..\\' + location)
 
     return location
 
