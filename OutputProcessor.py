@@ -70,7 +70,7 @@ def mainTable(document, allDangers):
 
 def hazardTable(document, summedHazards):
     table = document.add_table(rows=0, cols=2, style='TableGrid')
-    with open('HP\\hazards.txt', 'r') as allHazardsFile:
+    with open('HP\\hazards.txt', 'r', encoding='utf-8') as allHazardsFile:
         allHazards = allHazardsFile.read()
         hazardDict = json.loads(allHazards)
         for hazard in hazardDict:
@@ -81,7 +81,7 @@ def hazardTable(document, summedHazards):
 
 def precautionTable(document, summedPrecautions):
     table = document.add_table(rows=0, cols=2, style='TableGrid')
-    with open('HP\\precautions.txt', 'r') as allPrecautionsFile:
+    with open('HP\\precautions.txt', 'r', encoding='utf-8') as allPrecautionsFile:
         allPrecautions = allPrecautionsFile.read()
         precautionDict = json.loads(allPrecautions)
         for precaution in precautionDict:
