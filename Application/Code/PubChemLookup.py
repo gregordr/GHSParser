@@ -5,19 +5,22 @@ import re
 from datetime import datetime
 from multiprocessing import Pool
 
-def getForAll(elements):
+def processInputText(inputText):
+    allCompounds = re.split("[\n;]", inputText)
+    allCompounds = list(filter(lambda s: any([c.isalnum() for c in s]), allCompounds))
+
     pool = Pool()
     f = lambda A, n=5: [A[i:i + n] for i in range(0, len(A), n)]
-    queries = f(elements) #Pubchem asks to only perform 5 requests per second, so we need to split into groups of 5.
+    queries = f(allCompounds) #Pubchem asks to only perform 5 requests per second, so we need to split into groups of 5.
 
     results = []
 
     for query in queries:
-         results += pool.map(getAllDangers, query)
+         results += pool.map(processCompound, query)
 
     return results
 
-def getAllDangers(Name):
+def processCompound(Name):
     CID = getCID(Name)
     res = requests.get("https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/" + str(CID) + "/JSON")
     try:
@@ -27,7 +30,7 @@ def getAllDangers(Name):
 
     name = getName(info)
         
-    dangers = [name] + getDangers(info)
+    dangers = [name] + getStatements(info)
     print("End: " + str(datetime.now()))
     return dangers
 
@@ -44,15 +47,13 @@ def getName(info):
         if (section['TOCHeading'] == 'Names and Identifiers'):
             return section['Section'][0]['Information'][0]['StringValue']
 
-
-def getDangerSection(info):
+def getSafetySection(info):
     for section in info:
         if (section['TOCHeading'] == 'Safety and Hazards'):
             return section['Section'][0]['Section'][0]['Information'][0]['StringValue']
 
-
-def getDangers(info):
-    section = getDangerSection(info)
+def getStatements(info):
+    section = getSafetySection(info)
 
     if section == None:
         return [[],[],[]]
@@ -64,14 +65,14 @@ def getDangers(info):
 
     hazards = soup.find("div", {"class": "ghs-hazards"})
     hazardArray = re.findall("(H\d\d\d.*?):", str(hazards))
-    hazardArray = cleanUp(hazardArray)
+    hazardArray = cleanUpHazards(hazardArray)
 
     precautions = soup.find("div", {"class": "ghs-precautionary"})
     precautionArray = re.findall("(P\d\d\d.*?)[,<]", str(precautions))
 
     return [imageArray, hazardArray, precautionArray]
 
-def cleanUp(Array):
+def cleanUpHazards(Array):
     newArray = []
     for string in Array:
         newArray.append(re.findall("(H\d\d\d)", string))

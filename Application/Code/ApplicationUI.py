@@ -1,7 +1,6 @@
 import multiprocessing
 
-from Code import OutputProcessor, Dangers
-import re
+from Application.Code import Settings, OutputProcessor, PubChemLookup
 import os
 os.environ["KIVY_NO_FILELOG"] = "1"
 os.environ["KIVY_NO_CONSOLELOG"] = "1"
@@ -29,16 +28,12 @@ class UIApp(App):
         raise SystemExit(0)
 
     def process(self):
+        output = self.root.ids.output
         try:
-            output = self.root.ids.output
-            output.text = "Processing..."
-
-            text = self.root.ids.input.text
-
-            allCompounds = re.split("[\n;]" ,text)
-            allCompounds = list(filter(lambda s: any([c.isalnum() for c in s]), allCompounds))
-            allDangers = Dangers.getForAll(allCompounds)
             output.text = ""
+            inputText = self.root.ids.input.text
+            allDangers = PubChemLookup.processInputText(inputText)
+
             validDangers = []
             for danger in allDangers:
                 if danger[0] == 'Error':
@@ -49,12 +44,13 @@ class UIApp(App):
             location = OutputProcessor.doWord(validDangers)
 
             output.text = output.text + 'Saved document to ' + location
+            #Success
         except BaseException as e:
-            output = self.root.ids.output
             output.text = str(e)
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()
+    Settings.importSettings()
     from kivy.lang import Builder
     from kivy.core.window import Window
     Builder.load_file('UI.kv')
