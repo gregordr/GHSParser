@@ -63,7 +63,7 @@ def mainTable(document, allDangers):
         paragraph = row_cells[1].paragraphs[0]
         run = paragraph.add_run()
         for symbol in danger[1]:
-            run.add_picture("GHS\\GHS0" + symbol + ".png", width = size*10000, height = size*10000)
+            run.add_picture("Images\\GHS0" + symbol + ".png", width = size*10000, height = size*10000)
 
         for hazard in danger[2]:
             summedHazards.append(hazard[0])

@@ -1,7 +1,6 @@
 import multiprocessing
 
-import Dangers
-import OutputProcessor
+from Code import OutputProcessor, Dangers
 import re
 import os
 os.environ["KIVY_NO_FILELOG"] = "1"
