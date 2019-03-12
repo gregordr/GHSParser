@@ -9,7 +9,7 @@ The result will be a beautiful table waiting for you:
 
 # Download and instructions
 
-![Download](https://github.com/Somethingweirdhere/GHSParser/releases/download/v2.0/GHSParser.zip)
+[Download](https://github.com/Somethingweirdhere/GHSParser/releases/download/v2.0/GHSParser.zip)
 
 Unzip this and look into the folder. You should see a file called GHSParser.exe. Open it, and that's it.
 
