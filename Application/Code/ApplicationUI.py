@@ -43,10 +43,22 @@ class UIApp(App):
 
             location = OutputProcessor.doWord(validDangers)
 
-            output.text = output.text + 'Saved document to ' + location
+            output.text = output.text + 'Saved document to ' + location +'\n'
+
+            if(Settings.open):
+                self.openFile(location)
             #Success
         except BaseException as e:
-            output.text = str(e)
+            output.text = output.text + str(e)
+
+    def openFile(self, filepath):
+        import subprocess, os, platform
+        if platform.system() == 'Darwin':  # macOS
+            subprocess.call(('open', filepath))
+        elif platform.system() == 'Windows':  # Windows
+            os.startfile(filepath)
+        else:  # linux variants
+            subprocess.call(('xdg-open', filepath))
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()

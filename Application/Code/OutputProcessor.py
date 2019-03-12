@@ -2,7 +2,7 @@ from docx import Document
 from docx.shared import Cm
 import json
 
-size = 75
+from Application.Code import Settings
 
 def buildString(allDangers):
     used = "Name\tSymbols\tHazards\tPrecautions\n"
@@ -30,9 +30,9 @@ def doWord(allDangers):
         document.add_paragraph()
         precautionTable(document, summedDangers[1])
 
-    location = 'GHS.docx'
-    document.save('..\\' + location)
+    location = Settings.path
 
+    document.save(location)
     return location
 
 def mainTable(document, allDangers):
@@ -42,10 +42,10 @@ def mainTable(document, allDangers):
 
     table = document.add_table(rows=0, cols=4, style='TableGrid')
 
-    table.columns[0].width = Cm(3.44)
-    table.columns[1].width = Cm(4.75)
-    table.columns[2].width = Cm(2.49)
-    table.columns[3].width = Cm(4.56)
+    table.columns[0].width = Settings.mainTableColWidth1
+    table.columns[1].width = Settings.mainTableColWidth2
+    table.columns[2].width = Settings.mainTableColWidth3
+    table.columns[3].width = Settings.mainTableColWidth4
 
     table.add_row()
     hdr_cells = table.rows[0].cells
@@ -55,6 +55,7 @@ def mainTable(document, allDangers):
     hdr_cells[2].text = 'Hazards'
     hdr_cells[3].text = 'Precautions'
 
+    size = Settings.size
 
     for danger in allDangers:
         row_cells = table.add_row().cells
@@ -81,8 +82,8 @@ def mainTable(document, allDangers):
 
 def hazardTable(document, summedHazards):
     table = document.add_table(rows=0, cols=2, style='TableGrid')
-    table.columns[0].width = Cm(3.44)
-    table.columns[1].width = Cm(11.8)
+    table.columns[0].width = Settings.discTableColWidth1
+    table.columns[1].width = Settings.discTableColWidth2
 
     with open('HP\\hazards.txt', 'r', encoding='utf-8') as allHazardsFile:
         allHazards = allHazardsFile.read()
@@ -95,8 +96,8 @@ def hazardTable(document, summedHazards):
 
 def precautionTable(document, summedPrecautions):
     table = document.add_table(rows=0, cols=2, style='TableGrid')
-    table.columns[0].width = Cm(3.44)
-    table.columns[1].width = Cm(11.8)
+    table.columns[0].width = Settings.discTableColWidth1
+    table.columns[1].width = Settings.discTableColWidth2
 
     with open('HP\\precautions.txt', 'r', encoding='utf-8') as allPrecautionsFile:
         allPrecautions = allPrecautionsFile.read()
