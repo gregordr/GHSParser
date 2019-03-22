@@ -24,13 +24,13 @@ def processCompound(Name):
     CID = getCID(Name)
     res = requests.get("https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/" + str(CID) + "/JSON")
     try:
-        info = json.loads(res.content)['Record']['Section']
+        info = json.loads(res.content)['Record']
     except:
         return ['Error', Name]
 
-    name = getName(info)
+    Name = getName(info)
         
-    dangers = [name] + getStatements(info)
+    dangers = [Name] + getStatements(info)
     print("End: " + str(datetime.now()))
     return dangers
 
@@ -43,31 +43,33 @@ def getCID(cpName):
         return None
 
 def getName(info):
-    for section in info:
-        if (section['TOCHeading'] == 'Names and Identifiers'):
-            return section['Section'][0]['Information'][0]['StringValue']
+        return info['RecordTitle']
 
 def getSafetySection(info):
-    for section in info:
+    for section in info['Section']:
         if (section['TOCHeading'] == 'Safety and Hazards'):
-            return section['Section'][0]['Section'][0]['Information'][0]['StringValue']
+            return section['Section'][0]['Section'][0]['Information']
 
 def getStatements(info):
-    section = getSafetySection(info)
+    sections = getSafetySection(info)
 
-    if section == None:
-        return [[],[],[]]
+    images = None
+    hazards = None
+    precautions = None
 
-    soup = BeautifulSoup(section, 'html.parser')
+    for section in sections:
+        if(section['Name'] == 'Pictogram(s)'):
+            images = section['Value']['StringWithMarkup'][0]['Markup']
+        elif(section['Name'] == 'GHS Hazard Statements'):
+            hazards = section['Value']['StringWithMarkup']
+        elif(section['Name'] == 'Precautionary Statement Codes'):
+            precautions = section['Value']['StringWithMarkup'][0]['String']
 
-    images = soup.find("div", {"class": "pc-thumbnail-container"})
     imageArray = re.findall("\/images\/ghs\/GHS0(\d)\.svg", str(images))
 
-    hazards = soup.find("div", {"class": "ghs-hazards"})
     hazardArray = re.findall("(H\d\d\d.*?):", str(hazards))
     hazardArray = cleanUpHazards(hazardArray)
 
-    precautions = soup.find("div", {"class": "ghs-precautionary"})
     precautionArray = re.findall("(P\d\d\d.*?)[,<]", str(precautions))
 
     return [imageArray, hazardArray, precautionArray]
@@ -75,5 +77,5 @@ def getStatements(info):
 def cleanUpHazards(Array):
     newArray = []
     for string in Array:
-        newArray.append(re.findall("(H\d\d\d)", string))
+        newArray.append(re.findall("(H\d\d\d)", string)[0])
     return newArray

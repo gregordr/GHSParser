@@ -67,8 +67,8 @@ def mainTable(document, allDangers):
             run.add_picture("Images\\GHS0" + symbol + ".png", width = size*10000, height = size*10000)
 
         for hazard in danger[2]:
-            summedHazards.append(hazard[0])
-            row_cells[2].text = row_cells[2].text + hazard[0] + ", "
+            summedHazards.append(hazard)
+            row_cells[2].text = row_cells[2].text + hazard + ", "
         if (len(danger[2]) != 0):
             row_cells[2].text = row_cells[2].text[:-2]
 
