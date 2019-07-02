@@ -53,6 +53,9 @@ def getSafetySection(info):
 def getStatements(info):
     sections = getSafetySection(info)
 
+    if(sections == None):
+        return [[], [], []]
+
     images = None
     hazards = None
     precautions = None
